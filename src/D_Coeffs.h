@@ -12,15 +12,25 @@
 #include <array>
 #include <limits>
 
+///
 std::array<double,6>   D00_coeffs(double K0y, double R0y, double Kx0, double Rx0, double h, double D, double nu, int i);
+///
 std::array<double,8>   D01_coeffs(double K0y, double R0y, double Kx0, double Rx0, double h, double D, double nu, int i);
+///
 std::array<double,9>   D02_coeffs(double K0y, double R0y, double Kx0, double Rx0, double h, double D, double nu, int i);
+///
 std::array<double,8>   D10_coeffs(double K0y, double R0y, double Kx0, double Rx0, double h, double D, double nu, int i);
+///
 std::array<double,11>  D11_coeffs(double K0y, double R0y, double Kx0, double Rx0, double h, double D, double nu, int i);
+///
 std::array<double,12>  D12_coeffs(double K0y, double R0y, double Kx0, double Rx0, double h, double D, double nu, int i);
+///
 std::array<double,9>   D20_coeffs(double K0y, double R0y, double Kx0, double Rx0, double h, double D, double nu, int i);
+///
 std::array<double,12>  D21_coeffs(double K0y, double R0y, double Kx0, double Rx0, double h, double D, double nu, int i);
+///
 std::array<double,13>  D22_coeffs(double K0y, double R0y, double Kx0, double Rx0, double h, double D, double nu, int i);
+
 
 
 std::array<double,6> D00_coeffs(double K0y, double R0y, double Kx0, double Rx0, double h, double D, double nu, int i)
