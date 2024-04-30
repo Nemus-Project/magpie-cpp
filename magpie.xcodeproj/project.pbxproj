@@ -23,6 +23,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B87C52062BDFD81B0009588D /* eigs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = eigs.h; sourceTree = "<group>"; };
 		B88DCA7C2BD168AF0086F784 /* magpie */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = magpie; sourceTree = BUILT_PRODUCTS_DIR; };
 		B88DCA7F2BD168AF0086F784 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		B88DCA872BD1691F0086F784 /* CholmodSupport */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CholmodSupport; sourceTree = "<group>"; };
@@ -399,6 +400,7 @@
 		B88DCA7E2BD168AF0086F784 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				B87C52062BDFD81B0009588D /* eigs.h */,
 				B88DCC092BD7C69A0086F784 /* D_Coeffs.h */,
 				B88DCC082BD294880086F784 /* range.h */,
 				B88DCA7F2BD168AF0086F784 /* main.cpp */,

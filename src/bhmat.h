@@ -27,9 +27,9 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     const int Ny = Nxy[1];
     const double D = E * (Lz*Lz*Lz) / 12 / (1-(nu*nu));
     
-    Eigen::VectorXd a0(Ny);
-    Eigen::VectorXd a1(Ny-1);
-    Eigen::VectorXd a2(Ny-2);
+    Eigen::VectorXd a0(Ny); a0.setOnes(); a0[0] = 0; a0[Ny-1] = 0;
+    Eigen::VectorXd a1(Ny-1); a1.setOnes();
+    Eigen::VectorXd a2(Ny-2); a2.setOnes();
     
     //// dm2Ny  // pad zeros at the end
     double D20u00 = D20_coeffs(Kx0,Rx0,0,0,h,D,nu,6)[6];
@@ -70,7 +70,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd Dm2Ny(Ny*Nx);
     Dm2Ny << dm2Ny0.replicate(Nx-3,1),dm2Ny1,dm2Ny2,Eigen::VectorXd(Ny);
-    
+    // std::cout << "Dm2Ny\n" << Dm2Ny<< std::endl << '\n';
     //// dmNym1 // pad zeros at the end
     double D11u00 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,9)[9];
     double D12u01 = D12_coeffs(R0y,0,0,0,h,D,nu,10)[10];
@@ -116,6 +116,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd DmNym1(Ny*Nx);
     DmNym1 << dmNym10,0,dmNym11.replicate(Nx-3,1),dmNym1M1,0,dmNym1M,0;
+    // std::cout << "DmNym1\n" << DmNym1<< std::endl << '\n';
     //// dmNy   // pad zeros at the end
     
     double D10u00 = D10_coeffs(R0y,Kx0,Rx0,0,h,D,nu,3)[3];
@@ -168,6 +169,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd DmNy(Ny*Nx);
     DmNy << dmNy0,dmNy1.replicate((Nx-3),1),dmNyM1,dmNyM;
+    // std::cout << "DmNy\n" << DmNy<< std::endl << '\n';
     ////assert(all(abs(diag(biHarm,Ny+1) - DmNy) <= eps), "D0 incorrect");
     
     
@@ -217,6 +219,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd DmNy1(Ny*Nx);
     DmNy1 << 0,dmNy10,dmNy11.replicate(Nx-3,1),0,dmNy1M1,0,dmNy1M;
+    // std::cout << "DmNy1\n" << DmNy1<< std::endl << '\n';
     //// dm2   // pad zeros at the end
     double D02u00 = D02_coeffs(K0y,R0y,0,0,h,D,nu,6)[6];
     double D0Nu0Nm2 = D00_coeffs(K0y,R0y,KxL,RxL,h,D,nu,4)[4];
@@ -264,6 +267,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd Dm2(Ny*Nx);
     Dm2 << dm20,0,0,dm21,0,0,dm22.replicate(Nx-4,1),dm2M1,0,0,dm2M,0,0;
+    // std::cout << "Dm2\n" << Dm2 << '\n' << '\n';
     //// dm1   // pad zeros at the end
     
     
@@ -324,6 +328,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd Dm1(Ny*Nx);
     Dm1 << dm10,0,dm11,0,dm12.replicate(Nx-4,1),dm1M1,0,dm1M,0;
+    // std::cout << "Dm1\n" << Dm1 << '\n' << '\n';
     //// d00
     
     double D00u00 = D00_coeffs(K0y,R0y,Kx0,Rx0,h,D,nu,0)[0];
@@ -393,6 +398,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd D0(Ny*Nx);
     D0 << d00,d01,d02.replicate((Nx-4),1),d0Mm,d0M;
+    // std::cout << "D0\n" << D0 << '\n' << '\n';
     // //assert(all(abs(diag(biHarm,0) - D0) <= eps), "D0 incorrect");
     
     
@@ -451,7 +457,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd D1(Ny*Nx);
     D1 << d10,0,d11,0,d12.replicate(Nx-4,1),d1M1,0,d1M,0;
-    
+    // std::cout << "D1\n" << D1 << '\n' << '\n';
     //// dp2   // pad zeros at the start
     double D00u02 = D00_coeffs(K0y,R0y,Kx0,Rx0,h,D,nu,4)[4];
     double D01u03 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,5)[5];
@@ -497,6 +503,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd D2(Ny*Nx);
     D2 << d20,0,0,d21,0,0,d22.replicate(Nx-4,1),d2M1,0,0,d2M,0,0;
+    // std::cout << "D2\n" << D2 << '\n' << '\n';
     //// dpNym1 // pad zeros at the start
     D01u10 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,7)[7];
     D02u11 = D02_coeffs(K0y,R0y,0,0,h,D,nu,8)[8];
@@ -541,6 +548,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd DNym1(Ny*Nx);
     DNym1 << 0,dpNym10,0,dpNym11,dpNym12.replicate(Nx-3,1),0,dpNym1M;
+    // std::cout << "DNym1\n" << DNym1 << '\n' << '\n';
     //// dpNy   // pad zeros at the start
     D00u10 = D00_coeffs(K0y,R0y,Kx0,Rx0,h,D,nu,1)[1];
     D01u11 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,1)[1];
@@ -593,7 +601,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd DNy(Ny*Nx);
     DNy << dpNy0,dpNy1,dpNy2.replicate((Nx-3),1),dpNyM;
-    
+    // std::cout << "DNy\n" << DNy << '\n' << '\n';
     //// dpNyp1 // pad zeros at the start
     D00u11 = D00_coeffs(K0y,R0y,Kx0,Rx0,h,D,nu,5)[5];
     D01u12 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,6)[6];
@@ -639,6 +647,7 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd DNy1(Ny*Nx);
     DNy1 << dpNy10,0,dpNy11,0,dpNy12.replicate(Nx-3,1),dpNy1M,0;
+    // std::cout << "DNy1\n" << DNy1 << '\n' << '\n';
     //// dp2Ny  // pad zeros at the start
     D00u20 = D00_coeffs(K0y,R0y,Kx0,Rx0,h,D,nu,2)[2];
     D01u21 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,2)[2];
@@ -678,17 +687,17 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd D2Ny(Ny*Nx);
     D2Ny << dp2Ny0,dp2Ny1,dp2Ny2.replicate(Nx-3,1), Eigen::VectorXd(Ny);
+    // std::cout << "D2Ny\n" << D2Ny << '\n' << '\n';
     // Diag Biharmonic
-    
+
     std::vector<Eigen::VectorXd> BHdiags = {
         Dm2Ny,
-        DmNym1, DmNy, DmNy1,
-        Dm2, Dm1, D0, D1, D2,
-        DNym1, DNy, DNy1,
+        DmNym1, DmNy,DmNy1,
+        Dm2,Dm1,D0, D1,D2,
+        DNym1,DNy,DNy1,
         D2Ny
     };
-    
-    std::vector<int>dn = {-(2*(Ny)),-(Ny+1),-(Ny),-(Ny-1), -2,1,0,1,2, (Ny-1),(Ny),(Ny+1), 2*(Ny)};
+    std::vector<int>dn = {-(2*Ny),-(Ny+1),-Ny,-(Ny-1),-2,-1,0,1,2, Ny-1, Ny, Ny+1,2*Ny};
     
     spdiags(BHdiags, dn, biharm);
     double oh = 1/h;
