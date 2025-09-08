@@ -11,7 +11,9 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <Spectra/GenEigsSolver.h>
+#include <Spectra/GenEigsRealShiftSolver.h>
 #include <Spectra/MatOp/SparseGenMatProd.h>
+#include <Spectra/MatOp/SparseGenRealShiftSolve.h>
 
 #include "range.h"
 #include "spdiags.h"
@@ -53,16 +55,24 @@ int main(int argc, const char * argv[])
     
     std::cout << biharm.coeff(0,0) << std::endl;
     
-    
     // Construct matrix operation object using the wrapper class SparseGenMatProd
-    Spectra::SparseGenMatProd<double> op(biharm);
+//    Spectra::SparseGenMatProd<double> op(biharm);
  
     // Construct eigen solver object, requesting the largest three eigenvalues
-    Spectra::GenEigsSolver<Spectra::SparseGenMatProd<double>> eigs(op, 3, 6);
- 
+    
+    double sigma = 0.0;
+    
+    
+    Spectra::SparseGenRealShiftSolve<double> op(biharm);
+    op.set_shift(sigma);
+    
+    Spectra::GenEigsRealShiftSolver<Spectra::SparseGenRealShiftSolve<double>> eigs(op, 10, Nx*Ny, sigma);
+
+    
+
     // Initialize and compute
     eigs.init();
-    auto nconv = eigs.compute(Spectra::SortRule::LargestMagn);
+    auto nconv = eigs.compute(Spectra::SortRule::SmallestMagn);
  
 
     switch (eigs.info()) {
