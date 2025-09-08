@@ -697,6 +697,8 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
         DNym1,DNy,DNy1,
         D2Ny
     };
+    
+    
     std::vector<int>dn = {-(2*Ny),-(Ny+1),-Ny,-(Ny-1),-2,-1,0,1,2, Ny-1, Ny, Ny+1,2*Ny};
     
     spdiags(BHdiags, dn, biharm);
