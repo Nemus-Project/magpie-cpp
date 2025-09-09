@@ -121,8 +121,6 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     // std::cout << "DmNym1\n" << DmNym1<< std::endl << '\n';
     //// dmNy   // pad zeros at the end
     
-    double D10u00 = D10_coeffs(R0y,Kx0,Rx0,0,h,D,nu,3)[3];
-    double D11u01 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,4)[4];
     double D10u00 = D10_coeffs_x(R0y,Kx0,Rx0,h,D,nu)[3];
     double D11u01 = D11_coeffs_x(R0y,Rx0,h,D,nu)[4];
     double D12u02 = D12_coeffs_x(R0y,h,D,nu)[5];
@@ -275,8 +273,6 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     //// dm1   // pad zeros at the end
     
     
-    double D01u00 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,3)[3];
-    double D02u01 = D02_coeffs(K0y,R0y,0,0,h,D,nu,3)[3];
     double D01u00 = D01_coeffs_x(K0y,R0y,Rx0,h,D,nu)[3];
     double D02u01 = D02_coeffs_x(K0y,R0y,h,D,nu)[3];
     double D0Nu0Nm1 = D00_coeffs_x(K0y,R0y,KxL,RxL,h,D,nu)[3];
