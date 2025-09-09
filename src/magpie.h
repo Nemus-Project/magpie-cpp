@@ -1,17 +1,16 @@
 //
-//  main.cpp
-//  using_eigen
+//  magpie.h
+//  magpie
 //
-//  Created by Matthew Hamilton on 18/04/2024.
+//  Created by admin on 09/09/2025.
 //
+
+#ifndef magpie_h
+#define magpie_h
 
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <Eigen/Eigen>
-#include <Eigen/Core>
-#include <Eigen/SparseCore>
-
 #include <Spectra/GenEigsSolver.h>
 #include <Spectra/GenEigsRealShiftSolver.h>
 #include <Spectra/SymEigsSolver.h>
@@ -29,46 +28,41 @@
 #include <Spectra/MatOp/SparseSymShiftSolve.h>
 #include <Spectra/MatOp/SymShiftInvert.h>
 
-#include <complex>
-
-#include "range.h"
-#include "spdiags.h"
 #include "bhmat.h"
-#include <iomanip>
-
-#include "magpie.h"
 
 
 
-
-using Complex = std::complex<double>;
-
-int main(int argc, const char * argv[])
+/// <#Description#>
+/// - Parameters:
+///   - rho: <#rho description#>
+///   - E: <#E description#>
+///   - nu: <#nu description#>
+///   - ldim: <#ldim description#>
+///   - h: <#h description#>
+///   - BCs: <#BCs description#>
+void magpie(double rho, 
+            double E,
+            double nu, 
+            std::array<int,3> ldim, 
+            double h,
+            std::array<double,8> BCs,
+            int Nm = 0)
 {
-    double Lx = 1.10, Ly = 0.8, Lz = 5e-3;
-    double ldim[3] = {Lx, Ly, Lz};       // plate dimensions [x, y, z] in metres
-    double E    = 9.0e+9 ;        // Young's mod [Pa]
-    double rho  = 8765 ;            // density [kg/m^3]
-    double nu   = 0.3 ;             // poisson's ratio
-    int Nm   = 20;               // number of modes to compute
-    double h    = std::sqrt(Lx*Ly)*0.01; // Grid Spacing
-    double BC   = 1e15;   // elastic constants around the edges
-    
-    double D    = E * Lz*Lz*Lz / 12.0 / (1.0-(nu*nu));
-        
-    int Nx = 110;
-    int Ny = 80;
+    const auto& [Lx, Ly, Lz] = ldim;
+    double D = E * (Lz * Lz * Lz) / 12.0 / (1.0 - (nu * nu));
 
+    int Nx = Lx / h;
+    int Ny = Ly / h;
+    if(Nm == 0)
+        Nm = 16;
+    
+    
     Eigen::SparseMatrix<double> biharm(Ny*Nx,Ny*Nx);
-    
-    bhmat(biharm,{BC,BC,BC,BC,BC,BC,BC,BC}, {Nx,Ny}, h, Lz, E, nu);
-    
-    std::cout << "Nx: " << Nx << '\n';
-    std::cout << "Ny: " << Ny << '\n';
+    bhmat(biharm, BCs, {Nx, Ny}, h, Lz, E, nu);
     
     Spectra::SparseGenRealShiftSolve<double> op(biharm);
     Spectra::GenEigsRealShiftSolver<Spectra::SparseGenRealShiftSolve<double>> eigs(op, Nm, (2*Nm) + 1,0.0000);
-
+        
     eigs.init();
     auto nconv = eigs.compute(Spectra::SortRule::LargestMagn);
     
@@ -89,17 +83,14 @@ int main(int argc, const char * argv[])
     
     if(eigs.info() == Spectra::CompInfo::Successful) // Retrieve results
     {
+        auto Dm = eigs.eigenvalues();
+        auto Q = eigs.eigenvectors();
+        std::vector<double> Om;
+        Om.reserve(Nm);
         
-        auto evalues = eigs.eigenvalues();
-        
-        auto evectors = eigs.eigenvectors();
-        std::cout << "Number Converged eigenvalues:" << nconv << std::endl;
-                
-        for (auto val: evalues) {
-            std::cout << std::sqrt(std::abs(val.real()))*std::sqrt(D/rho/Lz) << std::endl;
+        for (int i = 0; i < nconv; i++) {
+            Om[i] = (std::sqrt(std::abs(Dm[i].real()))*std::sqrt(D/rho/Lz)) / M_2_PI;
         }
-        
     }
-    
-    return 0;
 }
+#endif /* magpie_h */
