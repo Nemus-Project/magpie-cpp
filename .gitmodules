@@ -1,3 +1,6 @@
 [submodule "src/Eigen"]
 	path = src/Eigen
 	url = https://gitlab.com/libeigen/eigen.git
+[submodule "src/spectra"]
+	path = src/spectra
+	url = https://github.com/yixuan/spectra
