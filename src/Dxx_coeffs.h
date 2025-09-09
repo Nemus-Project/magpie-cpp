@@ -11,7 +11,7 @@
 #include <vector>
 #include <cmath>
 
-std::vector<double> D00_coeffs(double K0y, double R0y, double Kx0, double Rx0, double h, double D,  double nu){
+std::vector<double> D00_coeffs_x(double K0y, double R0y, double Kx0, double Rx0, double h, double D,  double nu){
     /*param K0y:
     :param R0y:
     :param Kx0:
@@ -150,7 +150,7 @@ std::vector<double> D00_coeffs(double K0y, double R0y, double Kx0, double Rx0, d
     return {u00_c, u10_c, u20_c, u01_c, u02_c, u11_c};
 }
 
-std::vector<double> D01_coeffs(double K0y, double R0y, double Rx0, double h, double D, double nu){
+std::vector<double> D01_coeffs_x(double K0y, double R0y, double Rx0, double h, double D, double nu){
     /*param K0y:
     :param R0y:
     :param Rx0:
@@ -158,24 +158,25 @@ std::vector<double> D01_coeffs(double K0y, double R0y, double Rx0, double h, dou
     :param D:
     :param nu:
     :return*/
-    double u01_c = ((4 * (std::pow(D, 2)) * (std::pow(nu, 2)) - 4 * (std::pow(D, 2)) - 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * (std::pow(h, 2))) / (
-            4 * (std::pow(D, 2)) - 4 * (std::pow(D, 2)) * (std::pow(nu, 2)) + 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * (std::pow(h, 2))) - (
-                     8 * (4 * D + 4 * D * nu)) / (2 * D + R0y * h) - (4 * D * nu) / (2 * D + R0y * h) + (
-                     2 * K0y * Rx0 * (std::pow(R0y, 2)) * (std::pow(h, 6)) + 4 * K0y * D * (std::pow(R0y, 2)) * (
-                     std::pow(h, 5)) + 8 * K0y * Rx0 * D * R0y * (std::pow(h, 5)) - 8 * K0y * (std::pow(D, 2)) * R0y * (std::pow(h, 4)) * (
-                             std::pow(nu, 2)) + 16 * K0y * (std::pow(D, 2)) * R0y * (std::pow(h, 4)) - 14 * Rx0 * (std::pow(D, 2)) * R0y * (
-                             std::pow(h, 2)) * (std::pow(nu, 2)) + 28 * Rx0 * (std::pow(D, 2)) * R0y * (std::pow(h, 2)) * nu + 24 * Rx0 * (
-                             std::pow(D, 2)) * R0y * (std::pow(h, 2)) - 20 * (std::pow(D, 3)) * R0y * h * (std::pow(nu, 2)) + 40 * (
-                             std::pow(D, 3)) * R0y * h * nu + 48 * (std::pow(D, 3)) * R0y * h + 8 * K0y * Rx0 * (std::pow(D, 2)) * (
-                             std::pow(h, 4)) - 16 * K0y * (std::pow(D, 3)) * (std::pow(h, 3)) * (std::pow(nu, 2)) + 16 * K0y * (std::pow(D, 3)) * (
-                             std::pow(h, 3)) - 28 * Rx0 * (std::pow(D, 3)) * h * (std::pow(nu, 2)) + 56 * Rx0 * (
-                             std::pow(D, 3)) * h * nu + 48 * Rx0 * (std::pow(D, 3)) * h + 40 * (std::pow(D, 4)) * (std::pow(nu, 4)) - 80 * (
-                             std::pow(D, 4)) * (std::pow(nu, 3)) - 136 * (std::pow(D, 4)) * (std::pow(nu, 2)) + 80 * (std::pow(D, 4)) * nu + 96 * (
-                             std::pow(D, 4))) / (D * (2 * D + R0y * h) * (
-            4 * (std::pow(D, 2)) - 4 * (std::pow(D, 2)) * (std::pow(nu, 2)) + 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * (std::pow(h, 2)))) - (
-                     8 * D * Rx0 * h * nu) / (
-                     4 * (std::pow(D, 2)) - 4 * (std::pow(D, 2)) * (std::pow(nu, 2)) + 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * (
-                     std::pow(h, 2))) + 20);
+    double u01_c = ((4 * std::pow(D, 2) * std::pow(nu, 2) - 4 * std::pow(D, 2) - 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * std::pow(h, 2)) / (4 * std::pow(D, 2) - 4 * std::pow(D, 2) * std::pow(nu, 2) + 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * std::pow(h, 2)) - (8 * (4 * D + 4 * D * nu)) / (2 * D + R0y * h) - (4 * D * nu) / (2 * D + R0y * h) + (2 * K0y * Rx0 * std::pow(R0y, 2) * std::pow(h, 6) + 4 * K0y * D * std::pow(R0y, 2) * std::pow(h, 5) + 8 * K0y * Rx0 * D * R0y * std::pow(h, 5) - 8 * K0y * std::pow(D, 2) * R0y * std::pow(h, 4) * std::pow(nu, 2) + 16 * K0y * std::pow(D, 2) * R0y * std::pow(h, 4) - 14 * Rx0 * std::pow(D, 2) * R0y * std::pow(h, 2) * std::pow(nu, 2) + 28 * Rx0 * std::pow(D, 2) * R0y * std::pow(h, 2) * nu + 24 * Rx0 * std::pow(D, 2) * R0y * std::pow(h, 2) - 20 * std::pow(D, 3) * R0y * h * std::pow(nu, 2) + 40 * std::pow(D, 3) * R0y * h * nu + 48 * std::pow(D, 3) * R0y * h + 8 * K0y * Rx0 * std::pow(D, 2) * std::pow(h, 4) - 16 * K0y * std::pow(D, 3) * std::pow(h, 3) * std::pow(nu, 2) + 16 * K0y * std::pow(D, 3) * std::pow(h, 3) - 28 * Rx0 * std::pow(D, 3) * h * std::pow(nu, 2) + 56 * Rx0 * std::pow(D, 3) * h * nu + 48 * Rx0 * std::pow(D, 3) * h + 40 * std::pow(D, 4) * std::pow(nu, 4) - 80 * std::pow(D, 4) * std::pow(nu, 3) - 136 * std::pow(D, 4) * std::pow(nu, 2) + 80 * std::pow(D, 4) * nu + 96 * std::pow(D, 4)) / (D * (2 * D + R0y * h) * (4 * std::pow(D, 2) - 4 * std::pow(D, 2) * std::pow(nu, 2) + 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * std::pow(h, 2))) - (8 * D * Rx0 * h * nu) / (4 * std::pow(D, 2) - 4 * std::pow(D, 2) * std::pow(nu, 2) + 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * std::pow(h, 2)) + 20) ;
+//    double u01_c = ((4 * (std::pow(D, 2)) * (std::pow(nu, 2)) - 4 * (std::pow(D, 2)) - 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * (std::pow(h, 2))) / (
+//            4 * (std::pow(D, 2)) - 4 * (std::pow(D, 2)) * (std::pow(nu, 2)) + 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * (std::pow(h, 2))) - (
+//                     8 * (4 * D + 4 * D * nu)) / (2 * D + R0y * h) - (4 * D * nu) / (2 * D + R0y * h) + (
+//                     2 * K0y * Rx0 * (std::pow(R0y, 2)) * (std::pow(h, 6)) + 4 * K0y * D * (std::pow(R0y, 2)) * (
+//                     std::pow(h, 5)) + 8 * K0y * Rx0 * D * R0y * (std::pow(h, 5)) - 8 * K0y * (std::pow(D, 2)) * R0y * (std::pow(h, 4)) * (
+//                             std::pow(nu, 2)) + 16 * K0y * (std::pow(D, 2)) * R0y * (std::pow(h, 4)) - 14 * Rx0 * (std::pow(D, 2)) * R0y * (
+//                             std::pow(h, 2)) * (std::pow(nu, 2)) + 28 * Rx0 * (std::pow(D, 2)) * R0y * (std::pow(h, 2)) * nu + 24 * Rx0 * (
+//                             std::pow(D, 2)) * R0y * (std::pow(h, 2)) - 20 * (std::pow(D, 3)) * R0y * h * (std::pow(nu, 2)) + 40 * (
+//                             std::pow(D, 3)) * R0y * h * nu + 48 * (std::pow(D, 3)) * R0y * h + 8 * K0y * Rx0 * (std::pow(D, 2)) * (
+//                             std::pow(h, 4)) - 16 * K0y * (std::pow(D, 3)) * (std::pow(h, 3)) * (std::pow(nu, 2)) + 16 * K0y * (std::pow(D, 3)) * (
+//                             std::pow(h, 3)) - 28 * Rx0 * (std::pow(D, 3)) * h * (std::pow(nu, 2)) + 56 * Rx0 * (
+//                             std::pow(D, 3)) * h * nu + 48 * Rx0 * (std::pow(D, 3)) * h + 40 * (std::pow(D, 4)) * (std::pow(nu, 4)) - 80 * (
+//                             std::pow(D, 4)) * (std::pow(nu, 3)) - 136 * (std::pow(D, 4)) * (std::pow(nu, 2)) + 80 * (std::pow(D, 4)) * nu + 96 * (
+//                             std::pow(D, 4))) / (D * (2 * D + R0y * h) * (
+//            4 * (std::pow(D, 2)) - 4 * (std::pow(D, 2)) * (std::pow(nu, 2)) + 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * (std::pow(h, 2)))) - (
+//                     8 * D * Rx0 * h * nu) / (
+//                     4 * (std::pow(D, 2)) - 4 * (std::pow(D, 2)) * (std::pow(nu, 2)) + 2 * D * R0y * h + 2 * D * Rx0 * h + R0y * Rx0 * (
+//                     std::pow(h, 2))) + 20);
 
     double u11_c = ((8 * (2 * D - R0y * h)) / (2 * D + R0y * h) + (
             32 * (std::pow(D, 4)) * nu - 96 * (std::pow(D, 4)) + 96 * (std::pow(D, 4)) * (std::pow(nu, 2)) - 32 * (std::pow(D, 4)) * (std::pow(nu, 3)) - 48 * (
@@ -246,7 +247,7 @@ std::vector<double> D01_coeffs(double K0y, double R0y, double Rx0, double h, dou
 
     return {u01_c, u11_c, u21_c, u00_c, u02_c, u03_c, u12_c, u10_c};
 }
-std::vector<double> D02_coeffs(double K0y, double R0y, double h, double D, double nu){
+std::vector<double> D02_coeffs_x(double K0y, double R0y, double h, double D, double nu){
     /*param K0y:
     :param R0y:
     :param h:
@@ -278,7 +279,7 @@ std::vector<double> D02_coeffs(double K0y, double R0y, double h, double D, doubl
     return {u02_c, u12_c, u22_c, u01_c, u03_c, u04_c, u00_c, u13_c, u11_c};
 }
 
-std::vector<double> D10_coeffs(double R0y, double Kx0, double Rx0, double h, double D, double nu){
+std::vector<double> D10_coeffs_x(double R0y, double Kx0, double Rx0, double h, double D, double nu){
     /*param R0y:
     :param Kx0:
     :param Rx0:
@@ -375,7 +376,7 @@ std::vector<double> D10_coeffs(double R0y, double Kx0, double Rx0, double h, dou
     return {u10_c, u20_c, u30_c, u00_c, u11_c, u12_c, u21_c, u01_c};
 }
 
-std::vector<double> D11_coeffs(double R0y, double Rx0, double h, double D, double nu){
+std::vector<double> D11_coeffs_x(double R0y, double Rx0, double h, double D, double nu){
     return {(20 - (2 * D - Rx0 * h) / (2 * D + Rx0 * h) - (2 * D - R0y * h) / (2 * D + R0y * h)), - 8, 1,
             ((4 * D + 4 * D * nu) / (2 * D + Rx0 * h) - 8), ((4 * D + 4 * D * nu) / (2 * D + R0y * h) - 8), - 8,
             1, 2, (2 - (2 * D * nu) / (2 * D + Rx0 * h)),
@@ -383,13 +384,13 @@ std::vector<double> D11_coeffs(double R0y, double Rx0, double h, double D, doubl
             (2 - (2 * D * nu) / (2 * D + R0y * h))};
 }
 
-std::vector<double> D12_coeffs(double R0y, double h, double D, double nu){
+std::vector<double> D12_coeffs_x(double R0y, double h, double D, double nu){
     return {(20 - (2 * D - R0y * h) / (2 * D + R0y * h)), - 8, 1, - 8, 1,
             ((4 * D + 4 * D * nu) / (2 * D + R0y * h) - 8), - 8, 1, 2, 2, (2 - (2 * D * nu) / (2 * D + R0y * h)),
             (2 - (2 * D * nu) / (2 * D + R0y * h))};
 }
 
-std::vector<double> D20_coeffs(double Kx0, double Rx0, double h, double D, double nu){
+std::vector<double> D20_coeffs_x(double Kx0, double Rx0, double h, double D, double nu){
     /*param Kx0:
     :param Rx0:
     :param h:
@@ -420,12 +421,12 @@ std::vector<double> D20_coeffs(double Kx0, double Rx0, double h, double D, doubl
     return {u20_c, u21_c, u22_c, u10_c, u30_c, u40_c, u00_c, u31_c, u11_c};
 }
 
-std::vector<double> D21_coeffs(double Rx0, double h, double D, double nu){
+std::vector<double> D21_coeffs_x(double Rx0, double h, double D, double nu){
     return {(20 - (2 * D - Rx0 * h) / (2 * D + Rx0 * h)), - 8, 1, + ((4 * D + 4 * D * nu) / (2 * D + Rx0 * h) - 8),
             - 8, - 8, 1, 1, 2, (2 - (2 * D * nu) / (2 * D + Rx0 * h)), (2 - (2 * D * nu) / (2 * D + Rx0 * h)), 2};
 }
 
-std::vector<double> D22_coeffs(){
+std::vector<double> D22_coeffs_x(){
     return {1, 2, -8, 2, 1, -8, 20, -8, 1, 2, -8, 2, 1};
 }
 #endif /* Dxx_coeffs_h */

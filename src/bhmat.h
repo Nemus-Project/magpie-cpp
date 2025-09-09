@@ -10,11 +10,13 @@
 
 #include <iostream>
 #include <vector>
+
 #include <Eigen/Eigen>
 
 #include "range.h"
 #include "spdiags.h"
 #include "D_Coeffs.h"
+#include "Dxx_coeffs.h"
 
 
 void bhmat(Eigen::SparseMatrix<double>& biharm,
@@ -32,11 +34,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     Eigen::VectorXd a2(Ny-2); a2.setOnes();
     
     //// dm2Ny  // pad zeros at the end
-    double D20u00 = D20_coeffs(Kx0,Rx0,0,0,h,D,nu,6)[6];
-    double D21u01 = D21_coeffs(Rx0,0,0,0,h,D,nu,7)[7];
-    double D22u02 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[4];
-    double D2Nu0N = D20_coeffs(KxL,RxL,0,0,h,D,nu,6)[6];
-    double D2Nm1u0Nm1 = D21_coeffs(RxL,0,0,0,h,D,nu,7)[7];
+    double D20u00 = D20_coeffs_x(Kx0,Rx0,h,D,nu)[6];
+    double D21u01 = D21_coeffs_x(Rx0,h,D,nu)[7];
+    double D22u02 = D22_coeffs_x()[4];
+    double D2Nu0N = D20_coeffs_x(KxL,RxL,h,D,nu)[6];
+    double D2Nm1u0Nm1 = D21_coeffs_x(RxL,h,D,nu)[7];
     
     Eigen::VectorXd dm2Ny0 = D22u02*a0;
     dm2Ny0(0) = D20u00;
@@ -44,11 +46,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dm2Ny0(Ny-2) = D2Nm1u0Nm1;
     dm2Ny0(Ny-1) = D2Nu0N;
     
-    double D10u30 = D10_coeffs(RLy,Kx0,Rx0,0,h,D,nu,2)[2];
-    double D11u31 = D11_coeffs(RLy,Rx0,0,0,h,D,nu,6)[6];
-    double D12u32 = D12_coeffs(RLy,0,0,0,h,D,nu,7)[7];
-    double D1Nu3N = D10_coeffs(RLy,KxL,RxL,0,h,D,nu,2)[2];
-    double D1Nm1u3Nm1 = D11_coeffs(RLy,RxL,0,0,h,D,nu,6)[6];
+    double D10u30 = D10_coeffs_x(RLy,Kx0,Rx0,h,D,nu)[2];
+    double D11u31 = D11_coeffs_x(RLy,Rx0,h,D,nu)[6];
+    double D12u32 = D12_coeffs_x(RLy,h,D,nu)[7];
+    double D1Nu3N = D10_coeffs_x(RLy,KxL,RxL,h,D,nu)[2];
+    double D1Nm1u3Nm1 = D11_coeffs_x(RLy,RxL,h,D,nu)[6];
     
     Eigen::VectorXd dm2Ny1 = D12u32*a0;
     dm2Ny1(0) = D10u30;
@@ -56,11 +58,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dm2Ny1(Ny-2) = D1Nm1u3Nm1;
     dm2Ny1(Ny-1) = D1Nu3N;
     
-    double D00u20 = D00_coeffs(KLy,RLy,Kx0,Rx0,h,D,nu,2)[2];
-    double D01u21 = D01_coeffs(KLy,RLy,Rx0,0,h,D,nu,2)[2];
-    double D02u22 = D02_coeffs(KLy,RLy,0,0,h,D,nu,2)[2];
-    double D0Nu2N = D00_coeffs(KLy,RLy,KxL,RxL,h,D,nu,2)[2];
-    double D0Nm1u2Nm1 = D01_coeffs(KLy,RLy,RxL,0,h,D,nu,2)[2];
+    double D00u20 = D00_coeffs_x(KLy,RLy,Kx0,Rx0,h,D,nu)[2];
+    double D01u21 = D01_coeffs_x(KLy,RLy,Rx0,h,D,nu)[2];
+    double D02u22 = D02_coeffs_x(KLy,RLy,h,D,nu)[2];
+    double D0Nu2N = D00_coeffs_x(KLy,RLy,KxL,RxL,h,D,nu)[2];
+    double D0Nm1u2Nm1 = D01_coeffs_x(KLy,RLy,RxL,h,D,nu)[2];
     
     Eigen::VectorXd dm2Ny2 = D02u22*a0;
     dm2Ny2(0) = D00u20;
@@ -72,10 +74,10 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     Dm2Ny << dm2Ny0.replicate(Nx-3,1),dm2Ny1,dm2Ny2,Eigen::VectorXd(Ny);
     // std::cout << "Dm2Ny\n" << Dm2Ny<< std::endl << '\n';
     //// dmNym1 // pad zeros at the end
-    double D11u00 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,9)[9];
-    double D12u01 = D12_coeffs(R0y,0,0,0,h,D,nu,10)[10];
-    double D1Nu0Nm1 = D10_coeffs(R0y,KxL,RxL,0,h,D,nu,7)[7];
-    double D1Nm1u0Nm2 = D11_coeffs(R0y,RxL,0,0,h,D,nu,10)[10];
+    double D11u00 = D11_coeffs_x(R0y,Rx0,h,D,nu)[9];
+    double D12u01 = D12_coeffs_x(R0y,h,D,nu)[10];
+    double D1Nu0Nm1 = D10_coeffs_x(R0y,KxL,RxL,h,D,nu)[7];
+    double D1Nm1u0Nm2 = D11_coeffs_x(R0y,RxL,h,D,nu)[10];
     
     
     Eigen::VectorXd dmNym10 = D12u01*a1;
@@ -83,30 +85,30 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dmNym10(Ny-1-2) = D1Nm1u0Nm2;
     dmNym10(Ny-2) = D1Nu0Nm1;
     
-    double D21u10 = D21_coeffs(Rx0,0,0,0,h,D,nu,10)[10];
-    double D22u11 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[1];
-    double D2Nu1Nm1 = D20_coeffs(KxL,RxL,0,0,h,D,nu,8)[8];
-    double D2Nm1u1Nm2 = D21_coeffs(RxL,0,0,0,h,D,nu,11)[11];
+    double D21u10 = D21_coeffs_x(Rx0,h,D,nu)[10];
+    double D22u11 = D22_coeffs_x()[1];
+    double D2Nu1Nm1 = D20_coeffs_x(KxL,RxL,h,D,nu)[8];
+    double D2Nm1u1Nm2 = D21_coeffs_x(RxL,h,D,nu)[11];
     
     Eigen::VectorXd dmNym11 = D22u11*a0;
     dmNym11(0) = D21u10;
     dmNym11(Ny-1-2) = D2Nm1u1Nm2;
     dmNym11(Ny-2) = D2Nu1Nm1;
     
-    double D11u20 = D11_coeffs(RLy,Rx0,0,0,h,D,nu,8)[8];
-    double D12u21 = D12_coeffs(RLy,0,0,0,h,D,nu,9)[9];
-    double D1Nm1u2Nm2 = D11_coeffs(RLy,RxL,0,0,h,D,nu,7)[7];
-    double D1Nu2Nm1 = D10_coeffs(RLy,KxL,RxL,0,h,D,nu,6)[6];
+    double D11u20 = D11_coeffs_x(RLy,Rx0,h,D,nu)[8];
+    double D12u21 = D12_coeffs_x(RLy,h,D,nu)[9];
+    double D1Nm1u2Nm2 = D11_coeffs_x(RLy,RxL,h,D,nu)[7];
+    double D1Nu2Nm1 = D10_coeffs_x(RLy,KxL,RxL,h,D,nu)[6];
     
     Eigen::VectorXd dmNym1M1 = D12u21*a1;
     dmNym1M1(0) = D11u20;
     dmNym1M1(Ny-1-2) = D1Nm1u2Nm2;
     dmNym1M1(Ny-2) = D1Nu2Nm1;
     
-    double D01u10 = D01_coeffs(KLy,RLy,Rx0,0,h,D,nu,7)[7];
-    double D02u11 = D02_coeffs(KLy,RLy,0,0,h,D,nu,8)[8];
-    double D0Nu1Nm1 = D00_coeffs(KLy,RLy,KxL,RxL,h,D,nu,5)[5];
-    double D0Nm1u1Nm2 = D01_coeffs(KLy,RLy,RxL,0,h,D,nu,6)[6];
+    double D01u10 = D01_coeffs_x(KLy,RLy,Rx0,h,D,nu)[7];
+    double D02u11 = D02_coeffs_x(KLy,RLy,h,D,nu)[8];
+    double D0Nu1Nm1 = D00_coeffs_x(KLy,RLy,KxL,RxL,h,D,nu)[5];
+    double D0Nm1u1Nm2 = D01_coeffs_x(KLy,RLy,RxL,h,D,nu)[6];
     
     Eigen::VectorXd dmNym1M = D02u11*a1;
     dmNym1M(0) = D01u10;
@@ -121,9 +123,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     double D10u00 = D10_coeffs(R0y,Kx0,Rx0,0,h,D,nu,3)[3];
     double D11u01 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,4)[4];
-    double D12u02 = D12_coeffs(R0y,0,0,0,h,D,nu,5)[5];
-    double D1Nu0N = D10_coeffs(R0y,KxL,RxL,0,h,D,nu,3)[3];
-    double D1Nm1u0Nm1 = D11_coeffs(R0y,RxL,0,0,h,D,nu,4)[4];
+    double D10u00 = D10_coeffs_x(R0y,Kx0,Rx0,h,D,nu)[3];
+    double D11u01 = D11_coeffs_x(R0y,Rx0,h,D,nu)[4];
+    double D12u02 = D12_coeffs_x(R0y,h,D,nu)[5];
+    double D1Nu0N = D10_coeffs_x(R0y,KxL,RxL,h,D,nu)[3];
+    double D1Nm1u0Nm1 = D11_coeffs_x(R0y,RxL,h,D,nu)[4];
     
     Eigen::VectorXd dmNy0 = D12u02*a0;
     dmNy0(0) = D10u00;
@@ -131,11 +135,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dmNy0(Ny-2) = D1Nm1u0Nm1;
     dmNy0(Ny-1) = D1Nu0N;
     
-    double D20u10 = D20_coeffs(Kx0,Rx0,0,0,h,D,nu,3)[3];
-    double D21u11 = D21_coeffs(Rx0,0,0,0,h,D,nu,4)[4];
-    double D22u12 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[5];
-    double D2Nu1N = D20_coeffs(KxL,RxL,0,0,h,D,nu,3)[3];
-    double D2Nm1u1Nm1 = D21_coeffs(RxL,0,0,0,h,D,nu,4)[4];
+    double D20u10 = D20_coeffs_x(Kx0,Rx0,h,D,nu)[3];
+    double D21u11 = D21_coeffs_x(Rx0,h,D,nu)[4];
+    double D22u12 = D22_coeffs_x()[5];
+    double D2Nu1N = D20_coeffs_x(KxL,RxL,h,D,nu)[3];
+    double D2Nm1u1Nm1 = D21_coeffs_x(RxL,h,D,nu)[4];
     
     Eigen::VectorXd dmNy1 = D22u12*a0;
     dmNy1(0) = D20u10;
@@ -143,11 +147,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dmNy1(Ny-2) = D2Nm1u1Nm1;
     dmNy1(Ny-1) = D2Nu1N;
     
-    double D10u20 = D10_coeffs(RLy,Kx0,Rx0,0,h,D,nu,1)[1];
-    double D11u21 = D11_coeffs(RLy,Rx0,0,0,h,D,nu,5)[5];
-    double D12u22 = D12_coeffs(RLy,0,0,0,h,D,nu,6)[6];
-    double D1Nu2N = D10_coeffs(RLy,KxL,RxL,0,h,D,nu,1)[1];
-    double D1Nm1u2Nm1 = D11_coeffs(RLy,RxL,0,0,h,D,nu,5)[5];
+    double D10u20 = D10_coeffs_x(RLy,Kx0,Rx0,h,D,nu)[1];
+    double D11u21 = D11_coeffs_x(RLy,Rx0,h,D,nu)[5];
+    double D12u22 = D12_coeffs_x(RLy,h,D,nu)[6];
+    double D1Nu2N = D10_coeffs_x(RLy,KxL,RxL,h,D,nu)[1];
+    double D1Nm1u2Nm1 = D11_coeffs_x(RLy,RxL,h,D,nu)[5];
     
     Eigen::VectorXd dmNyM1 = D12u22*a0;
     dmNyM1(0) = D10u20;
@@ -155,11 +159,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dmNyM1(Ny-2) = D1Nm1u2Nm1;
     dmNyM1(Ny-1) = D1Nu2N;
     
-    double D00u10 = D00_coeffs(KLy,RLy,Kx0,Rx0,h,D,nu,1)[1];
-    double D01u11 = D01_coeffs(KLy,RLy,Rx0,0,h,D,nu,1)[1];
-    double D02u12 = D02_coeffs(KLy,RLy,0,0,h,D,nu,1)[1];
-    double D0Nu1N = D00_coeffs(KLy,RLy,KxL,RxL,h,D,nu,1)[1];
-    double D0Nm1u1Nm1 = D01_coeffs(KLy,RLy,RxL,0,h,D,nu,1)[1];
+    double D00u10 = D00_coeffs_x(KLy,RLy,Kx0,Rx0,h,D,nu)[1];
+    double D01u11 = D01_coeffs_x(KLy,RLy,Rx0,h,D,nu)[1];
+    double D02u12 = D02_coeffs_x(KLy,RLy,h,D,nu)[1];
+    double D0Nu1N = D00_coeffs_x(KLy,RLy,KxL,RxL,h,D,nu)[1];
+    double D0Nm1u1Nm1 = D01_coeffs_x(KLy,RLy,RxL,h,D,nu)[1];
     
     Eigen::VectorXd dmNyM = D02u12*a0;
     dmNyM(0) = D00u10;
@@ -174,20 +178,20 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     
     //// dmNyp1 // pad zeros at the
-    double D10u01 = D10_coeffs(R0y,Kx0,Rx0,0,h,D,nu,7)[7];
-    double D11u02 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,10)[10];
-    double D12u03 = D12_coeffs(R0y,0,0,0,h,D,nu,11)[11];
-    double D1Nm1u0N = D11_coeffs(R0y,RxL,0,0,h,D,nu,9)[9];
+    double D10u01 = D10_coeffs_x(R0y,Kx0,Rx0,h,D,nu)[7];
+    double D11u02 = D11_coeffs_x(R0y,Rx0,h,D,nu)[10];
+    double D12u03 = D12_coeffs_x(R0y,h,D,nu)[11];
+    double D1Nm1u0N = D11_coeffs_x(R0y,RxL,h,D,nu)[9];
     
     Eigen::VectorXd dmNy10 = D12u03*a1;
     dmNy10(0) = D10u01;
     dmNy10(1) = D11u02;
     dmNy10(Ny-2) = D1Nm1u0N;
     
-    double D20u11 = D20_coeffs(Kx0,Rx0,0,0,h,D,nu,8)[8];
-    double D21u12 = D21_coeffs(Rx0,0,0,0,h,D,nu,11)[11];
-    double D22u13 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[9];
-    double D2Nm1u1N = D21_coeffs(RxL,0,0,0,h,D,nu,10)[10];
+    double D20u11 = D20_coeffs_x(Kx0,Rx0,h,D,nu)[8];
+    double D21u12 = D21_coeffs_x(Rx0,h,D,nu)[11];
+    double D22u13 = D22_coeffs_x()[9];
+    double D2Nm1u1N = D21_coeffs_x(RxL,h,D,nu)[10];
     
     
     Eigen::VectorXd dmNy11 = D22u13*a0;
@@ -195,10 +199,10 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dmNy11(2) = D21u12;
     dmNy11(Ny-1) = D2Nm1u1N;
     
-    double D10u21 = D10_coeffs(RLy,Kx0,Rx0,0,h,D,nu,6)[6];
-    double D11u22 = D11_coeffs(RLy,Rx0,0,0,h,D,nu,7)[7];
-    double D12u23 = D12_coeffs(RLy,0,0,0,h,D,nu,8)[8];
-    double D1Nm1u2N = D11_coeffs(RLy,RxL,0,0,h,D,nu,8)[8];
+    double D10u21 = D10_coeffs_x(RLy,Kx0,Rx0,h,D,nu)[6];
+    double D11u22 = D11_coeffs_x(RLy,Rx0,h,D,nu)[7];
+    double D12u23 = D12_coeffs_x(RLy,h,D,nu)[8];
+    double D1Nm1u2N = D11_coeffs_x(RLy,RxL,h,D,nu)[8];
     
     
     Eigen::VectorXd dmNy1M1 = D12u23*a1;
@@ -206,10 +210,10 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dmNy1M1(1) = D11u22;
     dmNy1M1(Ny-2) = D1Nm1u2N;
     
-    double D00u11 = D00_coeffs(KLy,RLy,Kx0,Rx0,h,D,nu,5)[5];
-    double D01u12 = D01_coeffs(KLy,RLy,Rx0,0,h,D,nu,6)[6];
-    double D02u13 = D02_coeffs(KLy,RLy,0,0,h,D,nu,7)[7];
-    double D0Nm1u1N = D01_coeffs(KLy,RLy,RxL,0,h,D,nu,7)[7];
+    double D00u11 = D00_coeffs_x(KLy,RLy,Kx0,Rx0,h,D,nu)[5];
+    double D01u12 = D01_coeffs_x(KLy,RLy,Rx0,h,D,nu)[6];
+    double D02u13 = D02_coeffs_x(KLy,RLy,h,D,nu)[7];
+    double D0Nm1u1N = D01_coeffs_x(KLy,RLy,RxL,h,D,nu)[7];
     
     Eigen::VectorXd dmNy1M = D02u13*a1;
     dmNy1M(0) = D00u11;
@@ -221,44 +225,44 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     DmNy1 << 0,dmNy10,dmNy11.replicate(Nx-3,1),0,dmNy1M1,0,dmNy1M;
     // std::cout << "DmNy1\n" << DmNy1<< std::endl << '\n';
     //// dm2   // pad zeros at the end
-    double D02u00 = D02_coeffs(K0y,R0y,0,0,h,D,nu,6)[6];
-    double D0Nu0Nm2 = D00_coeffs(K0y,R0y,KxL,RxL,h,D,nu,4)[4];
-    double D0Nm1u0Nm3 = D01_coeffs(K0y,R0y,RxL,0,h,D,nu,5)[5];
+    double D02u00 = D02_coeffs_x(K0y,R0y,h,D,nu)[6];
+    double D0Nu0Nm2 = D00_coeffs_x(K0y,R0y,KxL,RxL,h,D,nu)[4];
+    double D0Nm1u0Nm3 = D01_coeffs_x(K0y,R0y,RxL,h,D,nu)[5];
     
     
     Eigen::VectorXd dm20 = D02u00*a2;
     dm20(Ny-2-2) = D0Nm1u0Nm3;
     dm20(Ny-1-2) = D0Nu0Nm2;
     
-    double D12u10 = D12_coeffs(R0y,0,0,0,h,D,nu,4)[4];
-    double D1Nu1Nm2 = D10_coeffs(R0y,KxL,RxL,0,h,D,nu,5)[5];
-    double D1Nm1u1Nm3 = D11_coeffs(R0y,RxL,0,0,h,D,nu,2)[2];
+    double D12u10 = D12_coeffs_x(R0y,h,D,nu)[4];
+    double D1Nu1Nm2 = D10_coeffs_x(R0y,KxL,RxL,h,D,nu)[5];
+    double D1Nm1u1Nm3 = D11_coeffs_x(R0y,RxL,h,D,nu)[2];
     
     Eigen::VectorXd dm21 = D12u10*a2 ;
     dm21(Ny-2-2) = D1Nm1u1Nm3;
     dm21(Ny-1-2) = D1Nu1Nm2;
     
-    double D22u20 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[0];
-    double D2Nu2Nm2 = D20_coeffs(KxL,RxL,0,0,h,D,nu,2)[2];
-    double D2Nm1u2Nm3 = D21_coeffs(RxL,0,0,0,h,D,nu,2)[2];
+    double D22u20 = D22_coeffs_x()[0];
+    double D2Nu2Nm2 = D20_coeffs_x(KxL,RxL,h,D,nu)[2];
+    double D2Nm1u2Nm3 = D21_coeffs_x(RxL,h,D,nu)[2];
     
     
     Eigen::VectorXd dm22 = D22u20*a0;
     dm22(Ny-2-2) = D2Nm1u2Nm3;
     dm22(Ny-1-2) = D2Nu2Nm2;
     
-    D12u10 = D12_coeffs(RLy,0,0,0,h,D,nu,4)[4];
-    D1Nu1Nm2 = D10_coeffs(RLy,KxL,RxL,0,h,D,nu,5)[5];
-    D1Nm1u1Nm3 = D11_coeffs(RLy,RxL,0,0,h,D,nu,2)[2];
+    D12u10 = D12_coeffs_x(RLy,h,D,nu)[4];
+    D1Nu1Nm2 = D10_coeffs_x(RLy,KxL,RxL,h,D,nu)[5];
+    D1Nm1u1Nm3 = D11_coeffs_x(RLy,RxL,h,D,nu)[2];
     
     
     Eigen::VectorXd dm2M1 = D12u10*a2 ;
     dm2M1(Ny-2-2) = D1Nm1u1Nm3;
     dm2M1(Ny-1-2) = D1Nu1Nm2;
     
-    D02u00 = D02_coeffs(KLy,RLy,0,0,h,D,nu,6)[6];
-    D0Nu0Nm2 = D00_coeffs(KLy,RLy,KxL,RxL,h,D,nu,4)[4];
-    D0Nm1u0Nm3 = D01_coeffs(KLy,RLy,RxL,0,h,D,nu,5)[5];
+    D02u00 = D02_coeffs_x(KLy,RLy,h,D,nu)[6];
+    D0Nu0Nm2 = D00_coeffs_x(KLy,RLy,KxL,RxL,h,D,nu)[4];
+    D0Nm1u0Nm3 = D01_coeffs_x(KLy,RLy,RxL,h,D,nu)[5];
     
     Eigen::VectorXd dm2M = D02u00*a2;
     dm2M(Ny-2-2) = D0Nm1u0Nm3;
@@ -273,18 +277,20 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     double D01u00 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,3)[3];
     double D02u01 = D02_coeffs(K0y,R0y,0,0,h,D,nu,3)[3];
-    double D0Nu0Nm1 = D00_coeffs(K0y,R0y,KxL,RxL,h,D,nu,3)[3];
-    double D0Nm1u0Nm2 = D01_coeffs(K0y,R0y,RxL,0,h,D,nu,4)[4];
+    double D01u00 = D01_coeffs_x(K0y,R0y,Rx0,h,D,nu)[3];
+    double D02u01 = D02_coeffs_x(K0y,R0y,h,D,nu)[3];
+    double D0Nu0Nm1 = D00_coeffs_x(K0y,R0y,KxL,RxL,h,D,nu)[3];
+    double D0Nm1u0Nm2 = D01_coeffs_x(K0y,R0y,RxL,h,D,nu)[4];
     
     Eigen::VectorXd dm10 = D02u01*a1;
     dm10(0) = D01u00;
     dm10(Ny-1-2) = D0Nm1u0Nm2;
     dm10(Ny-2) = D0Nu0Nm1;
     
-    double D11u10 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,3)[3];
-    double D12u11 = D12_coeffs(R0y,0,0,0,h,D,nu,3)[3];
-    double D1Nu1Nm1 = D10_coeffs(R0y,KxL,RxL,0,h,D,nu,4)[4];
-    double D1Nm1u1Nm2 = D11_coeffs(R0y,RxL,0,0,h,D,nu,1)[1];
+    double D11u10 = D11_coeffs_x(R0y,Rx0,h,D,nu)[3];
+    double D12u11 = D12_coeffs_x(R0y,h,D,nu)[3];
+    double D1Nu1Nm1 = D10_coeffs_x(R0y,KxL,RxL,h,D,nu)[4];
+    double D1Nm1u1Nm2 = D11_coeffs_x(R0y,RxL,h,D,nu)[1];
     
     
     Eigen::VectorXd dm11 = D12u11*a1;
@@ -292,10 +298,10 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dm11(Ny-1-2) = D1Nm1u1Nm2;
     dm11(Ny-2) = D1Nu1Nm1;
     
-    double D21u20 = D21_coeffs(Rx0,0,0,0,h,D,nu,3)[3];
-    double D22u21 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[2];
-    double D2Nu2Nm1 = D20_coeffs(KxL,RxL,0,0,h,D,nu,1)[1];
-    double D2Nm1u2Nm2 = D21_coeffs(RxL,0,0,0,h,D,nu,1)[1];
+    double D21u20 = D21_coeffs_x(Rx0,h,D,nu)[3];
+    double D22u21 = D22_coeffs_x()[2];
+    double D2Nu2Nm1 = D20_coeffs_x(KxL,RxL,h,D,nu)[1];
+    double D2Nm1u2Nm2 = D21_coeffs_x(RxL,h,D,nu)[1];
     
     
     Eigen::VectorXd dm12 = D22u21*a0;
@@ -303,10 +309,10 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dm12(Ny-1-2) = D2Nm1u2Nm2;
     dm12(Ny-2) = D2Nu2Nm1;
     
-    D11u10 = D11_coeffs(RLy,Rx0,0,0,h,D,nu,3)[3];
-    D12u11 = D12_coeffs(RLy,0,0,0,h,D,nu,3)[3];
-    D1Nu1Nm1 = D10_coeffs(RLy,KxL,RxL,0,h,D,nu,4)[4];
-    D1Nm1u1Nm2 = D11_coeffs(RLy,RxL,0,0,h,D,nu,1)[1];
+    D11u10 = D11_coeffs_x(RLy,Rx0,h,D,nu)[3];
+    D12u11 = D12_coeffs_x(RLy,h,D,nu)[3];
+    D1Nu1Nm1 = D10_coeffs_x(RLy,KxL,RxL,h,D,nu)[4];
+    D1Nm1u1Nm2 = D11_coeffs_x(RLy,RxL,h,D,nu)[1];
     
     
     Eigen::VectorXd dm1M1 = D12u11*a1;
@@ -314,10 +320,10 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dm1M1(Ny-1-2) = D1Nm1u1Nm2;
     dm1M1(Ny-2) = D1Nu1Nm1;
     
-    D01u00 = D01_coeffs(KLy,RLy,Rx0,0,h,D,nu,3)[3];
-    D02u01 = D02_coeffs(KLy,RLy,0,0,h,D,nu,3)[3];
-    D0Nu0Nm1 = D00_coeffs(KLy,RLy,KxL,RxL,h,D,nu,3)[3];
-    D0Nm1u0Nm2 = D01_coeffs(KLy,RLy,RxL,0,h,D,nu,4)[4];
+    D01u00 = D01_coeffs_x(KLy,RLy,Rx0,h,D,nu)[3];
+    D02u01 = D02_coeffs_x(KLy,RLy,h,D,nu)[3];
+    D0Nu0Nm1 = D00_coeffs_x(KLy,RLy,KxL,RxL,h,D,nu)[3];
+    D0Nm1u0Nm2 = D01_coeffs_x(KLy,RLy,RxL,h,D,nu)[4];
 
     
     Eigen::VectorXd dm1M = D02u01*a1;
@@ -331,11 +337,15 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     // std::cout << "Dm1\n" << Dm1 << '\n' << '\n';
     //// d00
     
-    double D00u00 = D00_coeffs(K0y,R0y,Kx0,Rx0,h,D,nu,0)[0];
-    double D01u01 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,0)[0];
-    double D02u02 = D02_coeffs(K0y,R0y,0,0,h,D,nu,0)[0];
-    double D0Nu0N = D00_coeffs(K0y,R0y,KxL,RxL,h,D,nu,0)[0];
-    double D0Nm1u0Nm1 = D01_coeffs(K0y,R0y,RxL,0,h,D,nu,0)[0];
+    double D00u00 = D00_coeffs_x(K0y,R0y,Kx0,Rx0,h,D,nu)[0];
+    double D01u01 = D01_coeffs_x(K0y,R0y,Rx0,h,D,nu)[0];
+    double D02u02 = D02_coeffs_x(K0y,R0y,h,D,nu)[0];
+    double D0Nu0N = D00_coeffs_x(K0y,R0y,KxL,RxL,h,D,nu)[0];
+    double D0Nm1u0Nm1 = D01_coeffs_x(K0y,R0y,RxL,h,D,nu)[0];
+    
+    
+    auto d00_x = D01_coeffs_x(K0y,R0y,Rx0,h,D,nu);
+    
     
     Eigen::VectorXd d00 = D02u02*a0;
     d00(0) = D00u00;
@@ -343,11 +353,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     d00(Ny-2) = D0Nm1u0Nm1;
     d00(Ny-1) = D0Nu0N;
     
-    double D10u10 = D10_coeffs(R0y,Kx0,Rx0,0,h,D,nu,0)[0];
-    double D11u11 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,0)[0];
-    double D12u12 = D12_coeffs(R0y,0,0,0,h,D,nu,0)[0];
-    double D1Nu1N = D10_coeffs(R0y,KxL,RxL,0,h,D,nu,0)[0];
-    double D1Nm1u1Nm1 = D11_coeffs(R0y,RxL,0,0,h,D,nu,0)[0];
+    double D10u10 = D10_coeffs_x(R0y,Kx0,Rx0,h,D,nu)[0];
+    double D11u11 = D11_coeffs_x(R0y,Rx0,h,D,nu)[0];
+    double D12u12 = D12_coeffs_x(R0y,h,D,nu)[0];
+    double D1Nu1N = D10_coeffs_x(R0y,KxL,RxL,h,D,nu)[0];
+    double D1Nm1u1Nm1 = D11_coeffs_x(R0y,RxL,h,D,nu)[0];
     
     
     Eigen::VectorXd d01 = D12u12*a0;
@@ -356,11 +366,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     d01(Ny-2) = D1Nm1u1Nm1;
     d01(Ny-1) = D1Nu1N;
     
-    double D20u20 = D20_coeffs(Kx0,Rx0,0,0,h,D,nu,0)[0];
-    double D21u21 = D21_coeffs(Rx0,0,0,0,h,D,nu,0)[0];
-    double D22u22 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[6];
-    double D2Nu2N = D20_coeffs(KxL,RxL,0,0,h,D,nu,0)[0];
-    double D2Nm1u2Nm1 = D21_coeffs(RxL,0,0,0,h,D,nu,0)[0];
+    double D20u20 = D20_coeffs_x(Kx0,Rx0,h,D,nu)[0];
+    double D21u21 = D21_coeffs_x(Rx0,h,D,nu)[0];
+    double D22u22 = D22_coeffs_x()[6];
+    double D2Nu2N = D20_coeffs_x(KxL,RxL,h,D,nu)[0];
+    double D2Nm1u2Nm1 = D21_coeffs_x(RxL,h,D,nu)[0];
     
     
     Eigen::VectorXd d02 = D22u22*a0;
@@ -370,11 +380,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     d02(Ny-1) = D2Nu2N;
     
     
-    D10u10 = D10_coeffs(RLy,Kx0,Rx0,0,h,D,nu,0)[0];
-    D11u11 = D11_coeffs(RLy,Rx0,0,0,h,D,nu,0)[0];
-    D12u12 = D12_coeffs(RLy,0,0,0,h,D,nu,0)[0];
-    D1Nu1N = D10_coeffs(RLy,KxL,RxL,0,h,D,nu,0)[0];
-    D1Nm1u1Nm1 = D11_coeffs(RLy,RxL,0,0,h,D,nu,0)[0];
+    D10u10 = D10_coeffs_x(RLy,Kx0,Rx0,h,D,nu)[0];
+    D11u11 = D11_coeffs_x(RLy,Rx0,h,D,nu)[0];
+    D12u12 = D12_coeffs_x(RLy,h,D,nu)[0];
+    D1Nu1N = D10_coeffs_x(RLy,KxL,RxL,h,D,nu)[0];
+    D1Nm1u1Nm1 = D11_coeffs_x(RLy,RxL,h,D,nu)[0];
     
     
     Eigen::VectorXd d0Mm = D12u12*a0;
@@ -383,11 +393,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     d0Mm(Ny-2) = D1Nm1u1Nm1;
     d0Mm(Ny-1) = D1Nu1N;
     
-    D00u00 = D00_coeffs(KLy,RLy,Kx0,Rx0,h,D,nu,0)[0];
-    D01u01 = D01_coeffs(KLy,RLy,Rx0,0,h,D,nu,0)[0];
-    D02u02 = D02_coeffs(KLy,RLy,0,0,h,D,nu,0)[0];
-    D0Nu0N = D00_coeffs(KLy,RLy,KxL,RxL,h,D,nu,0)[0];
-    D0Nm1u0Nm1 = D01_coeffs(KLy,RLy,RxL,0,h,D,nu,0)[0];
+    D00u00 = D00_coeffs_x(KLy,RLy,Kx0,Rx0,h,D,nu)[0];
+    D01u01 = D01_coeffs_x(KLy,RLy,Rx0,h,D,nu)[0];
+    D02u02 = D02_coeffs_x(KLy,RLy,h,D,nu)[0];
+    D0Nu0N = D00_coeffs_x(KLy,RLy,KxL,RxL,h,D,nu)[0];
+    D0Nm1u0Nm1 = D01_coeffs_x(KLy,RLy,RxL,h,D,nu)[0];
     
     
     Eigen::VectorXd d0M = D02u02*a0;
@@ -398,45 +408,45 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     
     Eigen::VectorXd D0(Ny*Nx);
     D0 << d00,d01,d02.replicate((Nx-4),1),d0Mm,d0M;
-    // std::cout << "D0\n" << D0 << '\n' << '\n';
+//     std::cout << "D0\n" << D0 << '\n' << '\n';
     // //assert(all(abs(diag(biHarm,0) - D0) <= eps), "D0 incorrect");
     
     
     //// dp1   // pad zeros at the start
-    double D00u01 = D00_coeffs(K0y,R0y,Kx0,Rx0,h,D,nu,3)[3];
-    double D01u02 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,4)[4];
-    double D02u03 = D02_coeffs(K0y,R0y,0,0,h,D,nu,4)[4];
-    double D0Nm1u0N = D01_coeffs(K0y,R0y,RxL,0,h,D,nu,3)[3];
+    double D00u01 = D00_coeffs_x(K0y,R0y,Kx0,Rx0,h,D,nu)[3];
+    double D01u02 = D01_coeffs_x(K0y,R0y,Rx0,h,D,nu)[4];
+    double D02u03 = D02_coeffs_x(K0y,R0y,h,D,nu)[4];
+    double D0Nm1u0N = D01_coeffs_x(K0y,R0y,RxL,h,D,nu)[3];
     
     Eigen::VectorXd d10 = D02u03*a1;
     d10(0) = D00u01;
     d10(1) = D01u02;
     d10(Ny-2) = D0Nm1u0N;
     
-    double D10u11 = D10_coeffs(R0y,Kx0,Rx0,0,h,D,nu,4)[4];
-    double D11u12 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,1)[1];
-    double D12u13 = D12_coeffs(R0y,0,0,0,h,D,nu,1)[1];
-    double D1Nm1u1N = D11_coeffs(R0y,RxL,0,0,h,D,nu,3)[3];
+    double D10u11 = D10_coeffs_x(R0y,Kx0,Rx0,h,D,nu)[4];
+    double D11u12 = D11_coeffs_x(R0y,Rx0,h,D,nu)[1];
+    double D12u13 = D12_coeffs_x(R0y,h,D,nu)[1];
+    double D1Nm1u1N = D11_coeffs_x(R0y,RxL,h,D,nu)[3];
     
     Eigen::VectorXd d11 = D12u13*a1;
     d11(0) = D10u11;
     d11(1) = D11u12;
     d11(Ny-2) = D1Nm1u1N;
     
-    double D20u21 = D20_coeffs(Kx0,Rx0,0,0,h,D,nu,1)[1];
-    double D21u22 = D21_coeffs(Rx0,0,0,0,h,D,nu,1)[1];
-    double D22u23 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[10];
-    double D2Nm1u2N = D21_coeffs(RxL,0,0,0,h,D,nu,3)[3];
+    double D20u21 = D20_coeffs_x(Kx0,Rx0,h,D,nu)[1];
+    double D21u22 = D21_coeffs_x(Rx0,h,D,nu)[1];
+    double D22u23 = D22_coeffs_x()[10];
+    double D2Nm1u2N = D21_coeffs_x(RxL,h,D,nu)[3];
     
     Eigen::VectorXd d12 = D22u23*a0;
     d12(0) = D20u21;
     d12(1) = D21u22;
     d12(Ny-2) = D2Nm1u2N;
     
-    D10u11 = D10_coeffs(RLy,Kx0,Rx0,0,h,D,nu,4)[4];
-    D11u12 = D11_coeffs(RLy,Rx0,0,0,h,D,nu,1)[1];
-    D12u13 = D12_coeffs(RLy,0,0,0,h,D,nu,1)[1];
-    D1Nm1u1N = D11_coeffs(RLy,RxL,0,0,h,D,nu,3)[3];
+    D10u11 = D10_coeffs_x(RLy,Kx0,Rx0,h,D,nu)[4];
+    D11u12 = D11_coeffs_x(RLy,Rx0,h,D,nu)[1];
+    D12u13 = D12_coeffs_x(RLy,h,D,nu)[1];
+    D1Nm1u1N = D11_coeffs_x(RLy,RxL,h,D,nu)[3];
     
     
     Eigen::VectorXd d1M1 = D12u13*a1;
@@ -444,10 +454,10 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     d1M1(1) = D11u12;
     d1M1(Ny-2) = D1Nm1u1N;
     
-    D00u01 = D00_coeffs(KLy,RLy,Kx0,Rx0,h,D,nu,3)[3];
-    D01u02 = D01_coeffs(KLy,RLy,Rx0,0,h,D,nu,4)[4];
-    D02u03 = D02_coeffs(KLy,RLy,0,0,h,D,nu,4)[4];
-    D0Nm1u0N = D01_coeffs(KLy,RLy,RxL,0,h,D,nu,3)[3];
+    D00u01 = D00_coeffs_x(KLy,RLy,Kx0,Rx0,h,D,nu)[3];
+    D01u02 = D01_coeffs_x(KLy,RLy,Rx0,h,D,nu)[4];
+    D02u03 = D02_coeffs_x(KLy,RLy,h,D,nu)[4];
+    D0Nm1u0N = D01_coeffs_x(KLy,RLy,RxL,h,D,nu)[3];
     
     
     Eigen::VectorXd d1M = D02u03*a1;
@@ -459,42 +469,42 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     D1 << d10,0,d11,0,d12.replicate(Nx-4,1),d1M1,0,d1M,0;
     // std::cout << "D1\n" << D1 << '\n' << '\n';
     //// dp2   // pad zeros at the start
-    double D00u02 = D00_coeffs(K0y,R0y,Kx0,Rx0,h,D,nu,4)[4];
-    double D01u03 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,5)[5];
-    double D02u04 = D02_coeffs(K0y,R0y,0,0,h,D,nu,5)[5];
+    double D00u02 = D00_coeffs_x(K0y,R0y,Kx0,Rx0,h,D,nu)[4];
+    double D01u03 = D01_coeffs_x(K0y,R0y,Rx0,h,D,nu)[5];
+    double D02u04 = D02_coeffs_x(K0y,R0y,h,D,nu)[5];
     
     Eigen::VectorXd d20 = D02u04*a2;
     d20(0) = D00u02;
     d20(1) = D01u03;
     
-    double D10u12 = D10_coeffs(R0y,Kx0,Rx0,0,h,D,nu,5)[5];
-    double D11u13 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,2)[2];
-    double D12u14 = D12_coeffs(R0y,0,0,0,h,D,nu,2)[2];
+    double D10u12 = D10_coeffs_x(R0y,Kx0,Rx0,h,D,nu)[5];
+    double D11u13 = D11_coeffs_x(R0y,Rx0,h,D,nu)[2];
+    double D12u14 = D12_coeffs_x(R0y,h,D,nu)[2];
     
     Eigen::VectorXd d21 = D12u14*a2;
     d21(0) = D10u12;
     d21(1) = D11u13;
     
-    double D20u22 = D20_coeffs(Kx0,Rx0,0,0,h,D,nu,2)[2];
-    double D21u23 = D21_coeffs(Rx0,0,0,0,h,D,nu,2)[2];
-    double D22u24 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[12];
+    double D20u22 = D20_coeffs_x(Kx0,Rx0,h,D,nu)[2];
+    double D21u23 = D21_coeffs_x(Rx0,h,D,nu)[2];
+    double D22u24 = D22_coeffs_x()[12];
     
     Eigen::VectorXd d22 = D22u24*a0;
     d22(0) = D20u22;
     d22(1) = D21u23;
     
-    D10u12 = D10_coeffs(RLy,Kx0,Rx0,0,h,D,nu,5)[5];
-    D11u13 = D11_coeffs(RLy,Rx0,0,0,h,D,nu,2)[2];
-    D12u14 = D12_coeffs(RLy,0,0,0,h,D,nu,2)[2];
+    D10u12 = D10_coeffs_x(RLy,Kx0,Rx0,h,D,nu)[5];
+    D11u13 = D11_coeffs_x(RLy,Rx0,h,D,nu)[2];
+    D12u14 = D12_coeffs_x(RLy,h,D,nu)[2];
     
     
     Eigen::VectorXd d2M1 = D12u14*a2;
     d2M1(0) = D10u12;
     d2M1(1) = D11u13;
     
-    D00u02 = D00_coeffs(KLy,RLy,Kx0,Rx0,h,D,nu,4)[4];
-    D01u03 = D01_coeffs(KLy,RLy,Rx0,0,h,D,nu,5)[5];
-    D02u04 = D02_coeffs(KLy,RLy,0,0,h,D,nu,5)[5];
+    D00u02 = D00_coeffs_x(KLy,RLy,Kx0,Rx0,h,D,nu)[4];
+    D01u03 = D01_coeffs_x(KLy,RLy,Rx0,h,D,nu)[5];
+    D02u04 = D02_coeffs_x(KLy,RLy,h,D,nu)[5];
     
     Eigen::VectorXd d2M = D02u04*a2;
     d2M(0) = D00u02;
@@ -505,40 +515,40 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     D2 << d20,0,0,d21,0,0,d22.replicate(Nx-4,1),d2M1,0,0,d2M,0,0;
     // std::cout << "D2\n" << D2 << '\n' << '\n';
     //// dpNym1 // pad zeros at the start
-    D01u10 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,7)[7];
-    D02u11 = D02_coeffs(K0y,R0y,0,0,h,D,nu,8)[8];
-    D0Nu1Nm1 = D00_coeffs(K0y,R0y,KxL,RxL,h,D,nu,5)[5];
-    D0Nm1u1Nm2 = D01_coeffs(K0y,R0y,RxL,0,h,D,nu,6)[6];
+    D01u10 = D01_coeffs_x(K0y,R0y,Rx0,h,D,nu)[7];
+    D02u11 = D02_coeffs_x(K0y,R0y,h,D,nu)[8];
+    D0Nu1Nm1 = D00_coeffs_x(K0y,R0y,KxL,RxL,h,D,nu)[5];
+    D0Nm1u1Nm2 = D01_coeffs_x(K0y,R0y,RxL,h,D,nu)[6];
     
     Eigen::VectorXd dpNym10 = D02u11*a1;
     dpNym10(0) = D01u10;
     dpNym10(Ny-1-2) = D0Nm1u1Nm2;
     dpNym10(Ny-2) = D0Nu1Nm1;
     
-    D11u20 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,8)[8];
-    D12u21 = D12_coeffs(R0y,0,0,0,h,D,nu,9)[9];
-    D1Nu2Nm1 = D10_coeffs(R0y,KxL,RxL,0,h,D,nu,6)[6];
-    D1Nm1u2Nm2 = D11_coeffs(R0y,RxL,0,0,h,D,nu,7)[7];
+    D11u20 = D11_coeffs_x(R0y,Rx0,h,D,nu)[8];
+    D12u21 = D12_coeffs_x(R0y,h,D,nu)[9];
+    D1Nu2Nm1 = D10_coeffs_x(R0y,KxL,RxL,h,D,nu)[6];
+    D1Nm1u2Nm2 = D11_coeffs_x(R0y,RxL,h,D,nu)[7];
     
     Eigen::VectorXd dpNym11 = D12u21*a1;
     dpNym11(0) = D11u20;
     dpNym11(Ny-1-2) = D1Nm1u2Nm2;
     dpNym11(Ny-2) = D1Nu2Nm1;
     
-    double D21u30 = D21_coeffs(Rx0,0,0,0,h,D,nu,9)[9];
-    double D22u31 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[3];
-    double D2Nu3Nm1 = D20_coeffs(KxL,RxL,0,0,h,D,nu,7)[7];
-    double D2Nm1u3Nm2 = D21_coeffs(RxL,0,0,0,h,D,nu,8)[8];
+    double D21u30 = D21_coeffs_x(Rx0,h,D,nu)[9];
+    double D22u31 = D22_coeffs_x()[3];
+    double D2Nu3Nm1 = D20_coeffs_x(KxL,RxL,h,D,nu)[7];
+    double D2Nm1u3Nm2 = D21_coeffs_x(RxL,h,D,nu)[8];
     
     Eigen::VectorXd dpNym12  = D22u31*a0;
     dpNym12(1) = D21u30;
     dpNym12(Ny-2) = D2Nm1u3Nm2;
     dpNym12(Ny-1) = D2Nu3Nm1;
     
-    D11u00 = D11_coeffs(RLy,Rx0,0,0,h,D,nu,9)[9];
-    D12u01 = D12_coeffs(RLy,0,0,0,h,D,nu,10)[10];
-    D1Nu0Nm1 = D10_coeffs(RLy,KxL,RxL,0,h,D,nu,7)[7];
-    D1Nm1u0Nm2 = D11_coeffs(RLy,RxL,0,0,h,D,nu,10)[10];
+    D11u00 = D11_coeffs_x(RLy,Rx0,h,D,nu)[9];
+    D12u01 = D12_coeffs_x(RLy,h,D,nu)[10];
+    D1Nu0Nm1 = D10_coeffs_x(RLy,KxL,RxL,h,D,nu)[7];
+    D1Nm1u0Nm2 = D11_coeffs_x(RLy,RxL,h,D,nu)[10];
     
     Eigen::VectorXd dpNym1M = D12u01*a1;
     dpNym1M(0) = D11u00;
@@ -550,11 +560,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     DNym1 << 0,dpNym10,0,dpNym11,dpNym12.replicate(Nx-3,1),0,dpNym1M;
     // std::cout << "DNym1\n" << DNym1 << '\n' << '\n';
     //// dpNy   // pad zeros at the start
-    D00u10 = D00_coeffs(K0y,R0y,Kx0,Rx0,h,D,nu,1)[1];
-    D01u11 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,1)[1];
-    D02u12 = D02_coeffs(K0y,R0y,0,0,h,D,nu,1)[1];
-    D0Nu1N = D00_coeffs(K0y,R0y,KxL,RxL,h,D,nu,1)[1];
-    D0Nm1u1Nm1 = D01_coeffs(K0y,R0y,RxL,0,h,D,nu,1)[1];
+    D00u10 = D00_coeffs_x(K0y,R0y,Kx0,Rx0,h,D,nu)[1];
+    D01u11 = D01_coeffs_x(K0y,R0y,Rx0,h,D,nu)[1];
+    D02u12 = D02_coeffs_x(K0y,R0y,h,D,nu)[1];
+    D0Nu1N = D00_coeffs_x(K0y,R0y,KxL,RxL,h,D,nu)[1];
+    D0Nm1u1Nm1 = D01_coeffs_x(K0y,R0y,RxL,h,D,nu)[1];
     
     Eigen::VectorXd dpNy0 = D02u12*a0;
     dpNy0(0) = D00u10;
@@ -562,11 +572,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dpNy0(Ny-2) = D0Nm1u1Nm1;
     dpNy0(Ny-1) = D0Nu1N;
     
-    D10u20 = D10_coeffs(R0y,Kx0,Rx0,0,h,D,nu,1)[1];
-    D11u21 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,5)[5];
-    D12u22 = D12_coeffs(R0y,0,0,0,h,D,nu,6)[6];
-    D1Nu2N = D10_coeffs(R0y,KxL,RxL,0,h,D,nu,1)[1];
-    D1Nm1u2Nm1 = D11_coeffs(R0y,RxL,0,0,h,D,nu,5)[5];
+    D10u20 = D10_coeffs_x(R0y,Kx0,Rx0,h,D,nu)[1];
+    D11u21 = D11_coeffs_x(R0y,Rx0,h,D,nu)[5];
+    D12u22 = D12_coeffs_x(R0y,h,D,nu)[6];
+    D1Nu2N = D10_coeffs_x(R0y,KxL,RxL,h,D,nu)[1];
+    D1Nm1u2Nm1 = D11_coeffs_x(R0y,RxL,h,D,nu)[5];
     ////
     Eigen::VectorXd dpNy1 = D12u22*a0;
     dpNy1(0) = D10u20;
@@ -575,11 +585,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dpNy1(Ny-1) = D1Nu2N;
     
     
-    double D20u30 = D20_coeffs(Kx0,Rx0,0,0,h,D,nu,4)[4];
-    double D21u31 = D21_coeffs(Rx0,0,0,0,h,D,nu,5)[5];
-    double D22u32 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[7];
-    double D2Nu3N = D20_coeffs(KxL,RxL,0,0,h,D,nu,4)[4];
-    double D2Nm1u3Nm1 = D21_coeffs(RxL,0,0,0,h,D,nu,5)[5];
+    double D20u30 = D20_coeffs_x(Kx0,Rx0,h,D,nu)[4];
+    double D21u31 = D21_coeffs_x(Rx0,h,D,nu)[5];
+    double D22u32 = D22_coeffs_x()[7];
+    double D2Nu3N = D20_coeffs_x(KxL,RxL,h,D,nu)[4];
+    double D2Nm1u3Nm1 = D21_coeffs_x(RxL,h,D,nu)[5];
     
     Eigen::VectorXd dpNy2 = D22u32*a0;
     dpNy2(0) = D20u30;
@@ -587,11 +597,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dpNy2(Ny-2) = D2Nm1u3Nm1;
     dpNy2(Ny-1) = D2Nu3N;
     
-    D10u00 = D10_coeffs(RLy,Kx0,Rx0,0,h,D,nu,3)[3];
-    D11u01 = D11_coeffs(RLy,Rx0,0,0,h,D,nu,4)[4];
-    D12u02 = D12_coeffs(RLy,0,0,0,h,D,nu,5)[5];
-    D1Nu0N = D10_coeffs(RLy,KxL,RxL,0,h,D,nu,3)[3];
-    D1Nm1u0Nm1 = D11_coeffs(RLy,RxL,0,0,h,D,nu,4)[4];
+    D10u00 = D10_coeffs_x(RLy,Kx0,Rx0,h,D,nu)[3];
+    D11u01 = D11_coeffs_x(RLy,Rx0,h,D,nu)[4];
+    D12u02 = D12_coeffs_x(RLy,h,D,nu)[5];
+    D1Nu0N = D10_coeffs_x(RLy,KxL,RxL,h,D,nu)[3];
+    D1Nm1u0Nm1 = D11_coeffs_x(RLy,RxL,h,D,nu)[4];
     
     Eigen::VectorXd dpNyM = D12u02*a0;
     dpNyM(0) = D10u00;
@@ -603,20 +613,20 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     DNy << dpNy0,dpNy1,dpNy2.replicate((Nx-3),1),dpNyM;
     // std::cout << "DNy\n" << DNy << '\n' << '\n';
     //// dpNyp1 // pad zeros at the start
-    D00u11 = D00_coeffs(K0y,R0y,Kx0,Rx0,h,D,nu,5)[5];
-    D01u12 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,6)[6];
-    D02u13 = D02_coeffs(K0y,R0y,0,0,h,D,nu,7)[7];
-    D0Nm1u1N = D01_coeffs(K0y,R0y,RxL,0,h,D,nu,7)[7];
+    D00u11 = D00_coeffs_x(K0y,R0y,Kx0,Rx0,h,D,nu)[5];
+    D01u12 = D01_coeffs_x(K0y,R0y,Rx0,h,D,nu)[6];
+    D02u13 = D02_coeffs_x(K0y,R0y,h,D,nu)[7];
+    D0Nm1u1N = D01_coeffs_x(K0y,R0y,RxL,h,D,nu)[7];
     
     Eigen::VectorXd dpNy10 = D02u13*a1 ;
     dpNy10(0) = D00u11;
     dpNy10(1) = D01u12;
     dpNy10(Ny-2) = D0Nm1u1N;
     
-    D10u21 = D10_coeffs(R0y,Kx0,Rx0,0,h,D,nu,6)[6];
-    D11u22 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,7)[7];
-    D12u23 = D12_coeffs(R0y,0,0,0,h,D,nu,8)[8];
-    D1Nm1u2N = D11_coeffs(R0y,RxL,0,0,h,D,nu,8)[8];
+    D10u21 = D10_coeffs_x(R0y,Kx0,Rx0,h,D,nu)[6];
+    D11u22 = D11_coeffs_x(R0y,Rx0,h,D,nu)[7];
+    D12u23 = D12_coeffs_x(R0y,h,D,nu)[8];
+    D1Nm1u2N = D11_coeffs_x(R0y,RxL,h,D,nu)[8];
     
     
     Eigen::VectorXd dpNy11 = D12u23*a1 ;
@@ -624,20 +634,20 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dpNy11(1) = D11u22;
     dpNy11(Ny-2) = D1Nm1u2N;
     
-    double D20u31 = D20_coeffs(Kx0,Rx0,0,0,h,D,nu,7)[7];
-    double D21u32 = D21_coeffs(Rx0,0,0,0,h,D,nu,8)[8];
-    double D22u33 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[11];
-    double D2Nm1u3N = D21_coeffs(RxL,0,0,0,h,D,nu,9)[9];
+    double D20u31 = D20_coeffs_x(Kx0,Rx0,h,D,nu)[7];
+    double D21u32 = D21_coeffs_x(Rx0,h,D,nu)[8];
+    double D22u33 = D22_coeffs_x()[11];
+    double D2Nm1u3N = D21_coeffs_x(RxL,h,D,nu)[9];
     
     Eigen::VectorXd dpNy12 = D22u33*a0;
     dpNy12(0) = D20u31;
     dpNy12(1) = D21u32;
     dpNy12(Ny-2) = D2Nm1u3N;
     
-    D10u01 = D10_coeffs(RLy,Kx0,Rx0,0,h,D,nu,7)[7];
-    D11u02 = D11_coeffs(RLy,Rx0,0,0,h,D,nu,10)[10];
-    D12u03 = D12_coeffs(RLy,0,0,0,h,D,nu,11)[11];
-    D1Nm1u0N = D11_coeffs(RLy,RxL,0,0,h,D,nu,9)[9];
+    D10u01 = D10_coeffs_x(RLy,Kx0,Rx0,h,D,nu)[7];
+    D11u02 = D11_coeffs_x(RLy,Rx0,h,D,nu)[10];
+    D12u03 = D12_coeffs_x(RLy,h,D,nu)[11];
+    D1Nm1u0N = D11_coeffs_x(RLy,RxL,h,D,nu)[9];
     
     Eigen::VectorXd dpNy1M = D12u03*a1;
     dpNy1M(0) = D10u01;
@@ -649,11 +659,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     DNy1 << dpNy10,0,dpNy11,0,dpNy12.replicate(Nx-3,1),dpNy1M,0;
     // std::cout << "DNy1\n" << DNy1 << '\n' << '\n';
     //// dp2Ny  // pad zeros at the start
-    D00u20 = D00_coeffs(K0y,R0y,Kx0,Rx0,h,D,nu,2)[2];
-    D01u21 = D01_coeffs(K0y,R0y,Rx0,0,h,D,nu,2)[2];
-    D02u22 = D02_coeffs(K0y,R0y,0,0,h,D,nu,2)[2];
-    D0Nu2N = D00_coeffs(K0y,R0y,KxL,RxL,h,D,nu,2)[2];
-    D0Nm1u2Nm1 = D01_coeffs(K0y,R0y,RxL,0,h,D,nu,2)[2];
+    D00u20 = D00_coeffs_x(K0y,R0y,Kx0,Rx0,h,D,nu)[2];
+    D01u21 = D01_coeffs_x(K0y,R0y,Rx0,h,D,nu)[2];
+    D02u22 = D02_coeffs_x(K0y,R0y,h,D,nu)[2];
+    D0Nu2N = D00_coeffs_x(K0y,R0y,KxL,RxL,h,D,nu)[2];
+    D0Nm1u2Nm1 = D01_coeffs_x(K0y,R0y,RxL,h,D,nu)[2];
     
     Eigen::VectorXd dp2Ny0 = D02u22*a0;
     dp2Ny0(0) = D00u20;
@@ -661,11 +671,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dp2Ny0(Ny-2) = D0Nm1u2Nm1;
     dp2Ny0(Ny-1) = D0Nu2N;
     
-    D10u30 = D10_coeffs(R0y,Kx0,Rx0,0,h,D,nu,2)[2];
-    D11u31 = D11_coeffs(R0y,Rx0,0,0,h,D,nu,6)[6];
-    D12u32 = D12_coeffs(R0y,0,0,0,h,D,nu,7)[7];
-    D1Nu3N = D10_coeffs(R0y,KxL,RxL,0,h,D,nu,2)[2];
-    D1Nm1u3Nm1 = D11_coeffs(R0y,RxL,0,0,h,D,nu,6)[6];
+    D10u30 = D10_coeffs_x(R0y,Kx0,Rx0,h,D,nu)[2];
+    D11u31 = D11_coeffs_x(R0y,Rx0,h,D,nu)[6];
+    D12u32 = D12_coeffs_x(R0y,h,D,nu)[7];
+    D1Nu3N = D10_coeffs_x(R0y,KxL,RxL,h,D,nu)[2];
+    D1Nm1u3Nm1 = D11_coeffs_x(R0y,RxL,h,D,nu)[6];
     
     Eigen::VectorXd dp2Ny1 = D12u32*a0;
     dp2Ny1(0) = D10u30;
@@ -673,11 +683,11 @@ void bhmat(Eigen::SparseMatrix<double>& biharm,
     dp2Ny1(Ny-2) = D1Nm1u3Nm1;
     dp2Ny1(Ny-1) = D1Nu3N;
     
-    double D20u40 = D20_coeffs(Kx0,Rx0,0,0,h,D,nu,5)[5];
-    double D21u41 = D21_coeffs(Rx0,0,0,0,h,D,nu,6)[6];
-    double D22u42 = D22_coeffs(Rx0,R0y,Kx0,Rx0,h,D,nu,1)[8];
-    double D2Nu4N = D20_coeffs(KxL,RxL,0,0,h,D,nu,5)[5];
-    double D2Nm1u4Nm1 = D21_coeffs(RxL,0,0,0,h,D,nu,6)[6];
+    double D20u40 = D20_coeffs_x(Kx0,Rx0,h,D,nu)[5];
+    double D21u41 = D21_coeffs_x(Rx0,h,D,nu)[6];
+    double D22u42 = D22_coeffs_x()[8];
+    double D2Nu4N = D20_coeffs_x(KxL,RxL,h,D,nu)[5];
+    double D2Nm1u4Nm1 = D21_coeffs_x(RxL,h,D,nu)[6];
     
     Eigen::VectorXd dp2Ny2 = D22u42*a0;
     dp2Ny2(0) = D20u40;

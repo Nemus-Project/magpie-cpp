@@ -1321,6 +1321,7 @@
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				HEADER_SEARCH_PATHS = (
 					src/Eigen/,
 					/opt/homebrew/Cellar/spectra/1.2.0/include,
